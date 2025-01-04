@@ -1,5 +1,6 @@
 import numpy as np
 import networkx as nx
+from networkx.linalg import graphmatrix
 from matplotlib import pyplot as plt
 
 class GraphView():
@@ -73,15 +74,13 @@ class GraphView():
         Update the incidence matrix after adding an edge.
         operation: 1 for adding an edge, 0 for deleting an edge
         """
+        self.incidence_matrix = [[0 for _ in range(len(self.edges_list))] for __ in range(self.V)]
+
         if operation == 1:
-            for i in range(self.E, len(self.edges_list)):
+            for i in range(len(self.edges_list)):
                 self.incidence_matrix[self.edges_list[i][0]][i] = 1
-                if self.is_undirected:
-                    self.incidence_matrix[self.edges_list[i][1]][i] = 1
-                else:
-                    self.incidence_matrix[self.edges_list[i][1]][i] = -1
-                
-            print(f"\nNew incidence_matrix: {np.array(self.incidence_matrix)}. \n Time = O(1)")
+                self.incidence_matrix[self.edges_list[i][1]][i] = 1
+            print(f"\nNew incidence_matrix: {self.incidence_matrix}. \n Time = O(V*E)")
         else:
             for i in range(len(del_edges)):
                 edge_to_del = self.edges_list.index(del_edges[i])
@@ -91,8 +90,10 @@ class GraphView():
      
     def update_all_views(self, operation, del_edges=[]):
         """
-        Update all the views after adding an edge.
+        Sorts the edges list and then Update all the views after adding an edge.
+        operation: 1 for adding an edge, 0 for deleting an edge
         """
+        self.edges_list.sort(key=lambda x: x[0]) # sort the edges list: O(ElogE)
         self.update_adjacency_list(operation, del_edges)
         self.update_adjacency_matrix(operation, del_edges)
         self.update_incidence_matrix(operation, del_edges)
@@ -150,8 +151,12 @@ g1.add_edge((1,3))
 print(g1.adjacency_list)
 print(g1.adjacency_matrix)
 print(g1.incidence_matrix)
-plt.figure(figsize=(8, 6))
+# plt.figure(figsize=(8, 6))
 G1 = nx.from_edgelist(g1.edges_list)
-nx.draw(G1, with_labels=True, node_color='skyblue', node_size=2000, edge_color='gray', font_size=15, font_color='black')
-plt.title("Graph from Adjacency Matrix")
-plt.show()
+# nx.draw(G1, with_labels=True, node_color='skyblue', node_size=2000, edge_color='gray', font_size=15, font_color='black')
+# plt.title("Graph from Adjacency Matrix")
+# plt.show()
+
+print(graphmatrix.incidence_matrix(G1).toarray())
+print(list(G1.edges))
+print(g1.edges_list)
