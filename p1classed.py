@@ -25,6 +25,18 @@ class GraphView():
         self.update_all_views(1)
         self.last_el_ptr += self.E
 
+    def print_adjacency_list(self):
+        print("Adjacency List:")
+        for i in range(self.V):
+            print(f"{i}: {self.adjacency_list[i]}")
+    
+    def print_adjacency_matrix(self):
+        print("Adjacency Matrix:")
+        print(np.array(self.adjacency_matrix))
+    
+    def print_incidence_matrix(self):
+        print("Incidence Matrix:")
+        print(np.array(self.incidence_matrix))
     #provide lists of edges to delete, check same for matrix as well
     def update_adjacency_list(self, operation, del_edges=[]):
         """
@@ -40,13 +52,13 @@ class GraphView():
                 self.adjacency_list[self.edges_list[i][0]].append((self.edges_list[i][1], weight))
                 if self.is_undirected:
                     self.adjacency_list[self.edges_list[i][1]].append((self.edges_list[i][0], weight))
-            print(f"\nNew adj_list: {self.adjacency_list}. \n Time = O(1)") #make display function to print properly
+            print(f"\nNew adj_list: {self.print_adjacency_list()}. \n Time = O(1)") #make display function to print properly
         else:
             for i in range(self.E, len(del_edges)):
                 self.adjacency_list[del_edges[i][0]].remove(del_edges[i][1])
                 if self.is_undirected:
                     self.adjacency_list[del_edges[i][1]].remove(del_edges[i][0])
-            print(f"\nNew adj_list: {np.array(self.adjacency_list)}. \n Time = O(V)")
+            print(f"\nNew adj_list: {self.print_adjacency_list()}. \n Time = O(V)")
     
     def update_adjacency_matrix(self,operation, del_edges=[]):
         """
@@ -62,12 +74,12 @@ class GraphView():
                 self.adjacency_matrix[self.edges_list[i][0]][self.edges_list[i][1]] = weight
                 if self.is_undirected:
                     self.adjacency_matrix[self.edges_list[i][1]][self.edges_list[i][0]] =  weight
-            print(f"\nNew adjacency_matrix: {np.array(self.adjacency_matrix)}. \n Time = O(1)")
+            print(f"\nNew adjacency_matrix: {self.print_adjacency_matrix()}. \n Time = O(1)")
         else:
             for i in range(len(del_edges)):
                 self.adjacency_matrix[del_edges[i][0]][del_edges[i][1]] = 0
                 self.adjacency_matrix[del_edges[i][1]][del_edges[i][0]] = 0
-            print(f"\nNew adjacency_matrix: {np.array(self.adjacency_matrix)}. \n Time = O(1)")
+            print(f"\nNew adjacency_matrix: {self.print_adjacency_matrix()}. \n Time = O(1)")
 
     def update_incidence_matrix(self, operation, del_edges=[]):
         """
@@ -80,13 +92,13 @@ class GraphView():
             for i in range(len(self.edges_list)):
                 self.incidence_matrix[self.edges_list[i][0]][i] = 1
                 self.incidence_matrix[self.edges_list[i][1]][i] = 1
-            print(f"\nNew incidence_matrix: {self.incidence_matrix}. \n Time = O(V*E)")
+            print(f"\nNew incidence_matrix: {self.print_incidence_matrix()}. \n Time = O(V*E)")
         else:
             for i in range(len(del_edges)):
                 edge_to_del = self.edges_list.index(del_edges[i])
                 self.incidence_matrix[del_edges[i][0]][edge_to_del] = 0
                 self.incidence_matrix[del_edges[i][1]][edge_to_del] = 0
-            print(f"\nNew incidence_matrix: {np.array(self.incidence_matrix)}. \n Time = O(E)")
+            print(f"\nNew incidence_matrix: {self.print_incidence_matrix()}. \n Time = O(E)")
      
     def update_all_views(self, operation, del_edges=[]):
         """
@@ -103,7 +115,7 @@ class Graph(GraphView):
         super().__init__(V, E, edges)
         self.is_undirected = True
         self.is_weighted = False
-         
+    
     def add_edge(self, edge, weight=None):
         """
         Add an edge to the graph.
@@ -141,22 +153,17 @@ class Graph(GraphView):
             self.edges_list.remove(edge)
         self.update_all_views()
         self.E -= len(del_edges)
-        
-        
+
+    def print_graph_nx(self):
+        G = nx.from_edgelist(self.edges_list)
+        nx.draw(G, with_labels=True, node_color='skyblue', node_size=2000, edge_color='gray', font_size=15, font_color='black')
+        plt.title("Graph from Adjacency Matrix")
+        plt.show()
+            
 g1 = Graph(4, 5, [(0, 1), (1, 2), (2, 3),(3,0),(0,2)])
-g1.is_undirected = True
-g1.is_weighted = False
+
+g1.print_graph_nx()
 
 g1.add_edge((1,3))
-print(g1.adjacency_list)
-print(g1.adjacency_matrix)
-print(g1.incidence_matrix)
-# plt.figure(figsize=(8, 6))
-G1 = nx.from_edgelist(g1.edges_list)
-# nx.draw(G1, with_labels=True, node_color='skyblue', node_size=2000, edge_color='gray', font_size=15, font_color='black')
-# plt.title("Graph from Adjacency Matrix")
-# plt.show()
 
-print(graphmatrix.incidence_matrix(G1).toarray())
-print(list(G1.edges))
-print(g1.edges_list)
+g1.print_graph_nx()
