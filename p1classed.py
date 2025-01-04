@@ -3,14 +3,26 @@ import networkx as nx
 from matplotlib import pyplot as plt
 
 class GraphView():
-    def __init__(self, V, E, edges):
+    def __init__(self, V, E, edges, is_undirected=True, is_weighted=False):
+        """
+        Initialize the graph view.
+        V: number of vertices
+        E: number of edges
+        edges: list of edges
+        is_undirected: True if the graph is undirected, False otherwise
+        is_weighted: True if the graph is weighted, False otherwise
+        """
         self.V = V # number of vertices
         self.E = E # number of edges
         self.edges_list = edges # list of edges
+        self.last_el_ptr = 0 # pointer to the last element in the edge list
+        self.is_undirected = is_undirected # True if the graph is undirected
+        self.is_weighted = is_weighted # True if the graph is weighted
         self.adjacency_list = [[] for _ in range(self.V)]
         self.adjacency_matrix = [[0 for _ in range(self.V)] for __ in range(self.V)]
-        self.incidence_matrix = [[0 for _ in range(self.E)] for __ in range(self.V)]
+        self.incidence_matrix = [[] for __ in range(self.V)]
         self.update_all_views(1)
+        self.last_el_ptr += self.E
 
     #provide lists of edges to delete, check same for matrix as well
     def update_adjacency_list(self, operation, del_edges=[]):
@@ -19,11 +31,15 @@ class GraphView():
         operation: 1 for adding an edge, 0 for deleting an edge
         """
         if operation == 1:
-            for i in range(self.E, len(self.edges_list)):
-                self.adjacency_list[self.edges_list[i][0]].append(self.edges_list[i][1:-1])
+            # this for loop goes from the last(previous) edge added to the end of the new extended edge_list
+            weight=1
+            for i in range(self.last_el_ptr, len(self.edges_list)):
+                if self.is_weighted:
+                    weight = self.edges_list[i][2]
+                self.adjacency_list[self.edges_list[i][0]].append((self.edges_list[i][1], weight))
                 if self.is_undirected:
-                    self.adjacency_list[self.edges_list[i][1]].append([self.edges_list[i][0], self.edges_list[i][2]])
-            print(f"\nNew adj_list: {np.array(self.adjacency_list)}. \n Time = O(1)")
+                    self.adjacency_list[self.edges_list[i][1]].append((self.edges_list[i][0], weight))
+            print(f"\nNew adj_list: {self.adjacency_list}. \n Time = O(1)") #make display function to print properly
         else:
             for i in range(self.E, len(del_edges)):
                 self.adjacency_list[del_edges[i][0]].remove(del_edges[i][1])
@@ -37,7 +53,7 @@ class GraphView():
         operation: 1 for adding an edge, 0 for deleting an edge
         """
         if operation == 1:
-            for i in range(self.E, len(self.edges_list)):
+            for i in range(self.last_el_ptr, len(self.edges_list)):
                 if self.is_weighted:
                     weight = self.edges_list[i][2]
                 else:
