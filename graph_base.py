@@ -52,8 +52,8 @@ class GraphView():
             # this for loop goes from the last(previous) edge added to the end of the new extended edge_list
             weight = 1
             for i in range(self.last_el_ptr, len(self.edges_list)):
-                if self.is_weighted:
-                    weight = self.edges_list[i][2]
+                if self.is_weighted or self.is_labelled:
+                    weight = self.edges_list[i][2] #if labelled, weight is actually the label
                 self.adjacency_list[self.edges_list[i][0]].append(
                     (self.edges_list[i][1], weight))
                 if self.is_undirected:
@@ -170,20 +170,22 @@ class Graph(GraphView):
             for edge in self.edges_list:
                 edges.append((edge[0], edge[1]))
                 edge_labels[(edge[0], edge[1])] = edge[2]
-            print("edge labels: ", edge_labels)
         else:
             edges = self.edges_list
 
-        G = nx.from_edgelist(edges)
+        G = nx.MultiGraph()
+        G.add_edges_from(edges)
         pos = nx.spring_layout(G)
         plt.figure()
         nx.draw(G, pos, with_labels=True, node_color='skyblue',
-                node_size=2000, edge_color='gray', font_size=15, font_color='black')
+                node_size=2000, edge_color='gray', font_size=15, font_color='black',
+                connectionstyle='arc3, rad = 0.1',
+                )
         if self.is_labelled:
             nx.draw_networkx_edge_labels(
                 G, pos,
                 edge_labels=edge_labels,
-                font_color="red"
+                font_color="red",
             )
         plt.axis("off")
         plt.title("Graph from Adjacency Matrix")

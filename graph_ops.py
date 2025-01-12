@@ -16,11 +16,11 @@ class GraphOps():
             adj_list[edge[1]].add(edge[0])
         return dict(adj_list)
 
-    def get_edges_list(self, adj_list):
+    def get_edges_list(self, adj_dict):
         edges_list = []
-        for node, neighbors in adj_list.items():
+        for node, neighbors in adj_dict.items():
             for neighbor in neighbors:
-                edges_list.append((node, neighbor[0]))
+                edges_list.append((node, neighbor[0], neighbor[1]))
         return edges_list
 
     def union(self, g1, g2):
@@ -48,8 +48,8 @@ class GraphOps():
             for edge in edges:
                 R_adjlist[node].add(edge)
 
-        R_adjlist = dict(enumerate(R_adjlist))
-        R_edges = self.get_edges_list(R_adjlist)
+        R_adjdict = dict(enumerate(R_adjlist))
+        R_edges = self.get_edges_list(R_adjdict)
         R = Graph(
             V=len(R_vertices),
             E=len(R_edges),
@@ -161,9 +161,9 @@ g2 = Graph(V=6,
            edges=[(0, 1, "a"), (0, 2, "g"), (1, 2, "c"), (1, 5, "h"), (2, 5, "k"), (5, 4,"l")],
            is_labelled=True)
 
-g1.print_graph_nx()
-g2.print_graph_nx()
-
+# g1.print_graph_nx()
+# g2.print_graph_nx()
+print(g1.adjacency_list)
 R_union = gops.union(g1, g2)
 R_union.print_graph_nx()
 
