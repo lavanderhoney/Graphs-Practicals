@@ -146,6 +146,18 @@ class GraphOps():
         R = self.difference(R_union, R_intersection)
         return R
 
+    def fusion(self, g1, g2, v1, v2):
+        """Computes the fusion of two graphs represented as adjacency lists.
+        g1: Graph object (from graph_base.py) of graph 1
+        g2: Graph object (from graph_base.py) of graph 2
+        v1: vertex of g1
+        v2: vertex of g2
+
+        returns: R, a Graph object of the fusion of g1 and g2
+        """
+        R_fusion = self.union(g1, g2)
+        R_fusion.add_edge((v1, v2))
+        return R_fusion
 
 gops = GraphOps()
 
