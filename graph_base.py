@@ -173,20 +173,22 @@ class Graph(GraphView):
         else:
             edges = self.edges_list
 
-        G = nx.MultiGraph()
+        # Choose graph type based on directed/undirected attribute
+        G = nx.MultiGraph() if self.is_undirected else nx.MultiDiGraph()
+
         G.add_edges_from(edges)
         pos = nx.spring_layout(G)
+
         plt.figure()
         nx.draw(G, pos, with_labels=True, node_color='skyblue',
                 node_size=2000, edge_color='gray', font_size=15, font_color='black',
                 connectionstyle='arc3, rad = 0.1',
+                arrows=not self.is_undirected  # Add arrows if the graph is directed
                 )
-        if self.is_labelled:
-            nx.draw_networkx_edge_labels(
-                G, pos,
-                edge_labels=edge_labels,
-                font_color="red",
-            )
+
+        if self.is_labelled and edge_labels:
+            nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_color="red")
+
         plt.axis("off")
         plt.title("Graph from Adjacency Matrix")
         plt.show()
