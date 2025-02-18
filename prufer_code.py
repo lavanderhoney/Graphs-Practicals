@@ -32,7 +32,7 @@ def tree_to_pruffer(V: int, edges: Dict[int, Set]) -> List[int]:
     # pruffer_code.sort()
     return pruffer_code
 
-def prufer_to_tree(prufer_code: List[int])->List[List[int]]:
+def prufer_to_tree(V:int, prufer_code: List[int])->List[List[int]]:
     edge_list = []
     leafs = []
     degree = [1 for _ in range(V)]
