@@ -2,14 +2,23 @@ from graph_base import *
 import numpy as np
 
 def check_graphical(degree_seq):
+    """
+    Havel-Hakimi theorem: A sequence is graphic if and only if the sequence obtained by deleting the largest degree k 
+    and subtracting one to the k largest degrees remaining is graphic.
+    A degree sequence is graphic is there exists a simple graph with that degree sequence.
+    """
     degree_seq = degree_seq.copy()
+    
+    #theorem: sum of degree sequence must be even
     if sum(degree_seq) % 2 != 0:
         return False
+    
     for i in range(len(degree_seq)):
         for j in range(i, len(degree_seq)):
             if degree_seq[j] <0:
-                return False
+                return False #degree sequence must be non-negative
         
+        #check if all elements are zero. If all elements are zero, then the degree sequence is graphic
         check_zero=True
         for j in range(i, len(degree_seq)):
             if degree_seq[j] != 0:
@@ -17,6 +26,8 @@ def check_graphical(degree_seq):
         if check_zero:
             return True
         
+        #every time we remove a vertex, we need to decrement the degree of the next k vertices. The next vertex is implemented wtih j=i+1
+        #where k is the degree of the vertex we removed
         for j in range(i+1, len(degree_seq)):
             degree_seq[j] -= 1
 
