@@ -42,10 +42,9 @@ def backtrack(graph, color_assignment, v, m, n):
             color_assignment[v] = None
     return False
 
-# Function to determine if the graph is m-colorable and get the coloring
 def is_m_colorable(graph, m):
     """
-    Check if the graph can be colored with m colors.
+    The main function to check if the graph can be colored with m colors.
     Args:
         graph (dict): Graph as an adjacency list.
         m: Number of colors.
@@ -58,7 +57,6 @@ def is_m_colorable(graph, m):
         return True, color_assignment
     return False, None
 
- # Compute the chromatic number using the maximum clique as a lower bound
 graph = {
         0: [1, 2, 3, 4],  # Central vertex
         1: [0, 2, 4],     # Cycle: 1-2-3-4-1
@@ -66,27 +64,33 @@ graph = {
         3: [0, 2, 4],
         4: [0, 1, 3]
     }
-maximal_clique = find_maximal_clique(graph)
+petersen_graph = {
+        0: [1, 4, 5],
+        1: [0, 2, 6],
+        2: [1, 3, 7],
+        3: [2, 4, 8],
+        4: [0, 3, 9],
+        5: [0, 7, 8],
+        6: [1, 8, 9],
+        7: [2, 5, 9],
+        8: [3, 5, 6],
+        9: [4, 6, 7]
+}
+maximal_clique = find_maximal_clique(petersen_graph)
 k = len(maximal_clique)
 m = k
 while True:
-    is_colorable, coloring = is_m_colorable(graph, m)
+    is_colorable, coloring = is_m_colorable(petersen_graph, m)
     if is_colorable:
         break
     m += 1
 print(f"Chromatic number: {m}")
 
 # Create a NetworkX graph from the dictionary
-G = nx.from_dict_of_lists(graph)
-
-# Define colors for visualization
+G = nx.from_dict_of_lists(petersen_graph)
 some_color_list = ['red', 'blue', 'green', 'yellow', 'purple']
 color_map = [some_color_list[coloring[node]] for node in G.nodes()]
-
-# Set layout: central vertex in the middle, outer vertices around it
-pos = nx.shell_layout(G, nlist=[[0], [1, 2, 3, 4]])
-
-# Draw the graph with the optimal coloring
+pos = nx.shell_layout(G)
 nx.draw(G, pos, node_color=color_map, with_labels=True)
 plt.title("Wheel Graph W_5 with Optimal Coloring")
 plt.show()
